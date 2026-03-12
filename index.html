@@ -269,10 +269,10 @@ document.getElementById('ts').textContent =
   new Date().toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
 
 function notifyEmily(label) {
-  emailjs.send("SERVICE_ID", "TEMPLATE_ID", {
+  emailjs.send("service_trw7ai1", "template_00q6scq", {
     label: label,
     timestamp: new Date().toLocaleString(),
-  }, "PUBLIC_KEY").catch(() => {});
+  }, "aZ0k8Vj-7XlNZanOl").catch(() => {});
 }
 
 function rng(seed) {
