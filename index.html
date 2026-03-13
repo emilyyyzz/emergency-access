@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Emergency Access</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@300;400&display=swap');
 
@@ -74,10 +74,95 @@ h1 em {
   line-height: 1.8;
 }
 
-/* ── CARDS ── */
+.screen { display: none; width: 100%; max-width: 460px; }
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: fadeUp 0.3s ease;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.whos-there-q {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.user-btns {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.user-btn {
+  flex: 1;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.user-btn span {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.user-btn:hover {
+  border-color: var(--red);
+  background: rgba(217,79,61,0.05);
+}
+
+.excuse-wrap { width: 100%; }
+
+.excuse-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.excuse-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  outline: none;
+  resize: none;
+  transition: border-color 0.15s;
+  line-height: 1.5;
+}
+.excuse-input::placeholder { color: var(--muted); font-style: italic; }
+.excuse-input:focus { border-color: #3a3a46; }
+
 .cards {
   width: 100%;
-  max-width: 460px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -166,7 +251,6 @@ h1 em {
   letter-spacing: 0.06em;
 }
 
-/* ── GLASS PANE ── */
 .glass {
   position: absolute;
   inset: 0;
@@ -214,9 +298,9 @@ h1 em {
 .glass.hitting { animation: glassHit 0.16s ease-out; }
 
 @keyframes glassShatter {
-  0%   { opacity:1; transform: scale(1); filter: brightness(1.5); }
-  35%  { opacity:0.55; transform: scale(1.02); }
-  100% { opacity:0; transform: scale(1.05); }
+  0%   { opacity:1; transform:scale(1); filter:brightness(1.5); }
+  35%  { opacity:0.55; transform:scale(1.02); }
+  100% { opacity:0; transform:scale(1.05); }
 }
 .glass.shattering {
   animation: glassShatter 0.42s cubic-bezier(0.4,0,0.2,1) forwards;
@@ -240,41 +324,147 @@ footer {
 <header>
   <div class="eyebrow">⚠ restricted</div>
   <h1>Emergency <em>Access</em></h1>
-  <div class="subtitle">Emily will be notified if any glass is broken.</div>
+  <div class="subtitle" id="subtitle">Identify yourself to continue.</div>
 </header>
 
-<div class="cards" id="cards"></div>
+<div class="screen active" id="screen-who">
+  <div class="whos-there-q">Who's there?</div>
+  <div class="user-btns">
+    <button class="user-btn" onclick="selectUser('brian')">
+      Brian
+      <span>his passwords</span>
+    </button>
+    <button class="user-btn" onclick="selectUser('emily')">
+      Emily
+      <span>her passwords</span>
+    </button>
+  </div>
+</div>
 
-<footer>
-  opened at <span id="ts"></span>
-</footer>
+<div class="screen" id="screen-main">
+  <div class="excuse-wrap">
+    <span class="excuse-label">Your excuse</span>
+    <textarea class="excuse-input" id="excuse" rows="2" placeholder="your pitiful reason for needing this…"></textarea>
+  </div>
+  <div class="cards" id="cards"></div>
+</div>
+
+<footer>opened at <span id="ts"></span></footer>
 
 <script>
-// ════════════════════════════════════════════════
-//  EDIT THESE — Emily fills in before committing
-// ════════════════════════════════════════════════
-const PASSWORDS = [
-  { label: "Laptop Padlock",  value: "4413"       },
-  { label: "Cold Turkey",    value: "07011997"  },
-  { label: "Ipad",    value: "p@ssw0rd99"    },
-];
+// ════════════════════════════════════════════════════════
+//  EDIT THESE
+// ════════════════════════════════════════════════════════
 
-const WEBHOOK = "https://hook.make.com/REPLACE_ME";
-// ════════════════════════════════════════════════
+// One shared EmailJS key — single generic template
+const EMAILJS_PUBLIC_KEY  = "aZ0k8Vj-7XlNZanOl";
+const EMAILJS_SERVICE_ID  = "service_trw7ai1";
+const EMAILJS_TEMPLATE_ID = "plate_00q6scq"; // template uses {{{content}}}, {{subject}}, {{to_email}}
+
+const CONFIG = {
+  brian: {
+    passwords: [
+      { label: "Cold Turkey",  value: ""      },
+      { label: "Laptop Padlock",    value: "4413" },
+    ],
+    notifyEmail: "zaruvinskyemily@gmail.com",   // who gets emailed
+    notifyName:  "Emily",
+    ascii: `
+██████╗ ██████╗ ██╗ █████╗ ███╗   ██╗
+██╔══██╗██╔══██╗██║██╔══██╗████╗  ██║
+██████╔╝██████╔╝██║███████║██╔██╗ ██║
+██╔══██╗██╔══██╗██║██╔══██║██║╚██╗██║
+██████╔╝██║  ██║██║██║  ██║██║ ╚████║
+╚═════╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+
+██████╗ ██████╗  ██████╗ ██╗  ██╗███████╗
+██╔══██╗██╔══██╗██╔═══██╗██║ ██╔╝██╔════╝
+██████╔╝██████╔╝██║   ██║█████╔╝ █████╗
+██╔══██╗██╔══██╗██║   ██║██╔═██╗ ██╔══╝
+██████╔╝██║  ██║╚██████╔╝██║  ██╗███████╗
+╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝`.trim(),
+  },
+  emily: {
+    passwords: [
+      { label: "Screen Time Code",  value: "3369"  },
+    ],
+    notifyEmail: "briancoyne617@gmail.com",   // who gets emailed
+    notifyName:  "Brian",
+    ascii: `
+███████╗███╗   ███╗██╗██╗  ██╗   ██╗
+██╔════╝████╗ ████║██║██║  ╚██╗ ██╔╝
+█████╗  ██╔████╔██║██║██║   ╚████╔╝
+██╔══╝  ██║╚██╔╝██║██║██║    ╚██╔╝
+███████╗██║ ╚═╝ ██║██║███████╗██║
+╚══════╝╚═╝     ╚═╝╚═╝╚══════╝╚═╝
+
+██████╗ ██████╗  ██████╗ ██╗  ██╗███████╗
+██╔══██╗██╔══██╗██╔═══██╗██║ ██╔╝██╔════╝
+██████╔╝██████╔╝██║   ██║█████╔╝ █████╗
+██╔══██╗██╔══██╗██║   ██║██╔═██╗ ██╔══╝
+██████╔╝██║  ██║╚██████╔╝██║  ██╗███████╗
+╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝`.trim(),
+  },
+};
+// ════════════════════════════════════════════════════════
 
 const MAX_CLICKS = 5;
+let currentUser = null;
+
+emailjs.init(EMAILJS_PUBLIC_KEY);
 
 document.getElementById('ts').textContent =
   new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + ', ' +
   new Date().toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
 
-function notifyEmily(label) {
-  emailjs.send("service_trw7ai1", "template_00q6scq", {
-    label: label,
-    timestamp: new Date().toLocaleString(),
-  }, "aZ0k8Vj-7XlNZanOl").catch(() => {});
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
+function selectUser(user) {
+  currentUser = user;
+  const cfg = CONFIG[user];
+  document.getElementById('subtitle').textContent =
+    `${cfg.notifyName} will be notified if any glass is broken.`;
+  buildCards(cfg.passwords);
+  goTo('screen-main');
+}
+
+function buildEmailContent(cfg, label, excuse, timestamp) {
+  const subject = `🚨 ${currentUser === 'brian' ? 'BRIAN' : 'EMILY'} BROKE THE GLASS — ${label}`;
+
+  const content = `<pre style="font-family:monospace;font-size:13px;line-height:1.4;background:#000;color:#ff3b2f;padding:24px;border-radius:8px;">${cfg.ascii}
+
+T H E   G L A S S   H A S   B E E N   S H A T T E R E D
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Device  :  ${label}
+  Time    :  ${timestamp}
+  Excuse  :  ${excuse}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${currentUser === 'brian' ? 'Brian' : 'Emily'} accessed the emergency passwords.</pre>`;
+
+  return { subject, content };
+}
+
+function notify(label) {
+  const cfg     = CONFIG[currentUser];
+  const excuse  = document.getElementById('excuse').value.trim() || '(no excuse given)';
+  const timestamp = new Date().toLocaleString();
+  const { subject, content } = buildEmailContent(cfg, label, excuse, timestamp);
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    to_email: cfg.notifyEmail,
+    subject,
+    content,
+  }).catch(() => {});
+}
+
+// ── crack generator ──────────────────────────────────────
 function rng(seed) {
   const x = Math.sin(seed + 1) * 43758.5453123;
   return x - Math.floor(x);
@@ -307,73 +497,75 @@ function buildCrackPaths(allClicks, w, h) {
   return paths.join('');
 }
 
-const container = document.getElementById('cards');
+// ── build cards ──────────────────────────────────────────
+let clickHistory = {};
 
-PASSWORDS.forEach((pw, idx) => {
-  const dots = '•'.repeat(Math.min(pw.value.length, 20));
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.innerHTML = `
-    <div class="card-body">
-      <div class="card-label">${pw.label}</div>
-      <div class="card-pw" id="pw-text-${idx}">${dots}</div>
-      <div class="copy-area" id="copy-${idx}">
-        <button class="copy-btn" id="copybtn-${idx}">Copy</button>
-        <span class="copy-tag">password revealed</span>
+function buildCards(passwords) {
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+  clickHistory = {};
+
+  passwords.forEach((pw, idx) => {
+    clickHistory[idx] = [];
+    const dots = '•'.repeat(Math.min(pw.value.length, 20));
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-body">
+        <div class="card-label">${pw.label}</div>
+        <div class="card-pw" id="pw-text-${idx}">${dots}</div>
+        <div class="copy-area" id="copy-${idx}">
+          <button class="copy-btn" id="copybtn-${idx}">Copy</button>
+          <span class="copy-tag">password revealed</span>
+        </div>
       </div>
-    </div>
-    <div class="glass" id="glass-${idx}" data-cracks="0">
-      <div class="glass-frost"></div>
-      <svg class="glass-svg" id="svg-${idx}" xmlns="http://www.w3.org/2000/svg"></svg>
-    </div>`;
-  container.appendChild(card);
+      <div class="glass" id="glass-${idx}" data-cracks="0">
+        <div class="glass-frost"></div>
+        <svg class="glass-svg" id="svg-${idx}" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>`;
+    container.appendChild(card);
 
-  document.getElementById(`copybtn-${idx}`).addEventListener('click', () => {
-    navigator.clipboard.writeText(pw.value).then(() => {
-      const btn = document.getElementById(`copybtn-${idx}`);
-      btn.textContent = 'Copied!';
-      btn.classList.add('ok');
-      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+    document.getElementById(`copybtn-${idx}`).addEventListener('click', () => {
+      navigator.clipboard.writeText(pw.value).then(() => {
+        const btn = document.getElementById(`copybtn-${idx}`);
+        btn.textContent = 'Copied!';
+        btn.classList.add('ok');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+      });
+    });
+
+    document.getElementById(`glass-${idx}`).addEventListener('click', function(e) {
+      const history = clickHistory[idx];
+      if (history.length >= MAX_CLICKS) return;
+
+      const rect  = this.getBoundingClientRect();
+      const cx    = e.clientX - rect.left;
+      const cy    = e.clientY - rect.top;
+      const w     = rect.width;
+      const h     = rect.height;
+      const stage = history.length + 1;
+
+      history.push({cx, cy, stage});
+      this.setAttribute('data-cracks', stage);
+      document.getElementById(`svg-${idx}`).innerHTML = buildCrackPaths(history, w, h);
+
+      this.classList.remove('hitting');
+      void this.offsetWidth;
+      this.classList.add('hitting');
+
+      if (stage >= MAX_CLICKS) {
+        const glassEl = this;
+        setTimeout(() => {
+          glassEl.classList.add('shattering');
+          notify(pw.label);
+          document.getElementById(`pw-text-${idx}`).textContent = pw.value;
+          document.getElementById(`copy-${idx}`).classList.add('show');
+          setTimeout(() => glassEl.remove(), 460);
+        }, 80);
+      }
     });
   });
-});
-
-const clickHistory = {};
-PASSWORDS.forEach((_, i) => clickHistory[i] = []);
-
-document.querySelectorAll('.glass').forEach(glass => {
-  glass.addEventListener('click', function(e) {
-    const idx = parseInt(this.id.split('-')[1]);
-    const history = clickHistory[idx];
-    if (history.length >= MAX_CLICKS) return;
-
-    const rect  = this.getBoundingClientRect();
-    const cx    = e.clientX - rect.left;
-    const cy    = e.clientY - rect.top;
-    const w     = rect.width;
-    const h     = rect.height;
-    const stage = history.length + 1;
-
-    history.push({cx, cy, stage});
-    this.setAttribute('data-cracks', stage);
-    document.getElementById(`svg-${idx}`).innerHTML = buildCrackPaths(history, w, h);
-
-    this.classList.remove('hitting');
-    void this.offsetWidth;
-    this.classList.add('hitting');
-
-    if (stage >= MAX_CLICKS) {
-      const glassEl = this;
-      setTimeout(() => {
-        glassEl.classList.add('shattering');
-        notifyEmily(PASSWORDS[idx].label);
-        document.getElementById(`pw-text-${idx}`).textContent = PASSWORDS[idx].value;
-        document.getElementById(`copy-${idx}`).classList.add('show');
-        setTimeout(() => glassEl.remove(), 460);
-      }, 80);
-    }
-  });
-});
+}
 </script>
 </body>
 </html>
