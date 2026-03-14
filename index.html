@@ -15,6 +15,8 @@
   --text: #e8e4dd;
   --muted: #52525e;
   --red: #d94f3d;
+  --green: #3a7d55;
+  --green-text: #6dba7e;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -87,6 +89,7 @@ h1 em {
   to   { opacity:1; transform:translateY(0); }
 }
 
+/* ── WHO'S THERE ── */
 .whos-there-q {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
@@ -132,9 +135,22 @@ h1 em {
   background: rgba(217,79,61,0.05);
 }
 
+/* ── STATUS ── */
+.status-msg {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.08em;
+  padding: 32px 0;
+  width: 100%;
+}
+.status-msg.error { color: var(--red); }
+
+/* ── EXCUSE ── */
 .excuse-wrap { width: 100%; }
 
-.excuse-label {
+.field-label {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
   letter-spacing: 0.18em;
@@ -160,7 +176,19 @@ h1 em {
 }
 .excuse-input::placeholder { color: var(--muted); font-style: italic; }
 .excuse-input:focus { border-color: #3a3a46; }
+.excuse-input.invalid { border-color: var(--red); }
 
+.field-error {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--red);
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+  display: none;
+}
+.field-error.show { display: block; }
+
+/* ── CARDS ── */
 .cards {
   width: 100%;
   display: flex;
@@ -242,7 +270,7 @@ h1 em {
   transition: border-color 0.15s, color 0.15s;
 }
 .copy-btn:hover { border-color: #3a3a46; color: var(--text); }
-.copy-btn.ok { border-color: #2a5c35; color: #6dba7e; }
+.copy-btn.ok { border-color: #2a5c35; color: var(--green-text); }
 
 .copy-tag {
   font-family: 'IBM Plex Mono', monospace;
@@ -251,6 +279,172 @@ h1 em {
   letter-spacing: 0.06em;
 }
 
+/* ── UPDATE PASSWORDS BUTTON ── */
+.update-toggle {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  margin-top: 4px;
+}
+.update-toggle:hover { border-color: #3a3a46; color: var(--text); }
+
+/* ── EDITOR ── */
+.editor-wrap {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.editor-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.editor-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editor-section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--red);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pw-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pw-row-label {
+  flex: 0.9;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.pw-row-label:focus { border-color: #3a3a46; }
+
+.pw-row-value {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.pw-row-value:focus { border-color: #3a3a46; }
+
+.pw-row-del {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  padding: 9px 11px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.pw-row-del:hover { border-color: var(--red); color: var(--red); }
+
+.add-row-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  padding: 9px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  width: 100%;
+}
+.add-row-btn:hover { border-color: #3a3a46; color: var(--text); }
+
+.editor-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.save-btn {
+  flex: 1;
+  padding: 12px;
+  background: var(--green);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.save-btn:hover { opacity: 0.85; }
+.save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.cancel-btn {
+  padding: 12px 18px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.cancel-btn:hover { border-color: #3a3a46; color: var(--text); }
+
+.save-status {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  min-height: 16px;
+}
+.save-status.ok    { color: var(--green-text); }
+.save-status.error { color: var(--red); }
+
+/* ── GLASS ── */
 .glass {
   position: absolute;
   inset: 0;
@@ -327,6 +521,7 @@ footer {
   <div class="subtitle" id="subtitle">Identify yourself to continue.</div>
 </header>
 
+<!-- SCREEN 1: Who's there -->
 <div class="screen active" id="screen-who">
   <div class="whos-there-q">Who's there?</div>
   <div class="user-btns">
@@ -341,12 +536,40 @@ footer {
   </div>
 </div>
 
+<!-- SCREEN 2: Main -->
 <div class="screen" id="screen-main">
   <div class="excuse-wrap">
-    <span class="excuse-label">Your excuse</span>
+    <span class="field-label">Your excuse <span style="color:var(--red)">*</span></span>
     <textarea class="excuse-input" id="excuse" rows="2" placeholder="your pitiful reason for needing this…"></textarea>
+    <div class="field-error" id="excuse-error">an excuse is required before breaking glass</div>
   </div>
-  <div class="cards" id="cards"></div>
+
+  <div id="cards-wrap" style="width:100%">
+    <div class="status-msg" id="loading-msg">fetching passwords…</div>
+    <div class="cards" id="cards" style="display:none"></div>
+  </div>
+
+  <!-- Update passwords toggle -->
+  <button class="update-toggle" id="update-toggle-btn" onclick="openEditor()" style="display:none">
+    ⚙ update passwords
+  </button>
+
+  <!-- Editor -->
+  <div class="editor-wrap" id="editor-wrap" style="display:none">
+    <div class="editor-title">⚙ password editor</div>
+
+    <div class="editor-section">
+      <div class="editor-section-label" id="editor-section-label"></div>
+      <div id="editor-other"></div>
+      <button class="add-row-btn" onclick="addEditorRow('other')">+ add row</button>
+    </div>
+
+    <div class="editor-actions">
+      <button class="cancel-btn" onclick="closeEditor()">Cancel</button>
+      <button class="save-btn" id="save-btn" onclick="saveToGist()">Save to Gist</button>
+    </div>
+    <div class="save-status" id="save-status"></div>
+  </div>
 </div>
 
 <footer>opened at <span id="ts"></span></footer>
@@ -355,19 +578,17 @@ footer {
 // ════════════════════════════════════════════════════════
 //  EDIT THESE
 // ════════════════════════════════════════════════════════
-
-// One shared EmailJS key — single generic template
 const EMAILJS_PUBLIC_KEY  = "aZ0k8Vj-7XlNZanOl";
 const EMAILJS_SERVICE_ID  = "service_trw7ai1";
-const EMAILJS_TEMPLATE_ID = "template_00q6scq"; // template uses {{{content}}}, {{subject}}, {{to_email}}
+const EMAILJS_TEMPLATE_ID = "template_00q6scq";
+
+const GIST_ID      = "1391d74b24503da590ab187c136ef45f";
+const GIST_RAW_URL = "https://gist.githubusercontent.com/emilyyyzz/" + GIST_ID + "/raw/passwords.json";
+const GITHUB_TOKEN = "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"; // ghp_... scoped to gist only
 
 const CONFIG = {
   brian: {
-    passwords: [
-      { label: "Cold Turkey",  value: "07011997"      },
-      { label: "Laptop Padlock",    value: "4413" },
-    ],
-    notifyEmail: "zaruvinskyemily@gmail.com",   // who gets emailed
+    notifyEmail: "zaruvinskyemily@gmail.com",
     notifyName:  "Emily",
     ascii: `
 ██████╗ ██████╗ ██╗ █████╗ ███╗   ██╗
@@ -385,10 +606,7 @@ const CONFIG = {
 ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝`.trim(),
   },
   emily: {
-    passwords: [
-      { label: "Screen Time Code",  value: "3369"  },
-    ],
-    notifyEmail: "briancoyne617@gmail.com",   // who gets emailed
+    notifyEmail: "briancoyne617@gmail.com",
     notifyName:  "Brian",
     ascii: `
 ███████╗███╗   ███╗██╗██╗  ██╗   ██╗
@@ -409,7 +627,9 @@ const CONFIG = {
 // ════════════════════════════════════════════════════════
 
 const MAX_CLICKS = 5;
-let currentUser = null;
+let currentUser     = null;
+let gistData        = null; // full {brian:[...], emily:[...]} from Gist
+let clickHistory    = {};
 
 emailjs.init(EMAILJS_PUBLIC_KEY);
 
@@ -422,18 +642,71 @@ function goTo(id) {
   document.getElementById(id).classList.add('active');
 }
 
-function selectUser(user) {
+// ── USER SELECTION ───────────────────────────────────────
+async function selectUser(user) {
   currentUser = user;
   const cfg = CONFIG[user];
   document.getElementById('subtitle').textContent =
     `${cfg.notifyName} will be notified if any glass is broken.`;
-  buildCards(cfg.passwords);
   goTo('screen-main');
+  await loadPasswords();
 }
 
-function buildEmailContent(cfg, label, excuse, timestamp) {
-  const subject = `🚨 ${currentUser === 'brian' ? 'BRIAN' : 'EMILY'} BROKE THE GLASS — ${label}`;
+async function loadPasswords() {
+  const loadingMsg = document.getElementById('loading-msg');
+  const cardsEl    = document.getElementById('cards');
+  const toggleBtn  = document.getElementById('update-toggle-btn');
 
+  loadingMsg.textContent  = 'fetching passwords…';
+  loadingMsg.className    = 'status-msg';
+  loadingMsg.style.display = 'block';
+  cardsEl.style.display    = 'none';
+  toggleBtn.style.display  = 'none';
+
+  try {
+    const res  = await fetch(GIST_RAW_URL + '?t=' + Date.now());
+    gistData   = await res.json();
+    const passwords = gistData[currentUser];
+
+    if (!passwords || passwords.length === 0) throw new Error('empty');
+
+    loadingMsg.style.display = 'none';
+    cardsEl.style.display    = 'flex';
+    toggleBtn.style.display  = 'block';
+    buildCards(passwords);
+  } catch {
+    loadingMsg.textContent = '⚠ could not load passwords — check Gist URL';
+    loadingMsg.className   = 'status-msg error';
+  }
+}
+
+// ── EXCUSE VALIDATION ────────────────────────────────────
+function requireExcuse() {
+  const val   = document.getElementById('excuse').value.trim();
+  const errEl = document.getElementById('excuse-error');
+  const input = document.getElementById('excuse');
+  if (!val) {
+    input.classList.add('invalid');
+    errEl.classList.add('show');
+    input.focus();
+    return false;
+  }
+  input.classList.remove('invalid');
+  errEl.classList.remove('show');
+  return true;
+}
+
+document.getElementById('excuse').addEventListener('input', function() {
+  if (this.value.trim()) {
+    this.classList.remove('invalid');
+    document.getElementById('excuse-error').classList.remove('show');
+  }
+});
+
+// ── EMAIL ────────────────────────────────────────────────
+function buildEmailContent(cfg, label, excuse, timestamp) {
+  const name    = currentUser === 'brian' ? 'BRIAN' : 'EMILY';
+  const subject = `🚨 ${name} BROKE THE GLASS — ${label}`;
   const content = `<pre style="font-family:monospace;font-size:13px;line-height:1.4;background:#000;color:#ff3b2f;padding:24px;border-radius:8px;">${cfg.ascii}
 
 T H E   G L A S S   H A S   B E E N   S H A T T E R E D
@@ -447,16 +720,14 @@ T H E   G L A S S   H A S   B E E N   S H A T T E R E D
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ${currentUser === 'brian' ? 'Brian' : 'Emily'} accessed the emergency passwords.</pre>`;
-
   return { subject, content };
 }
 
 function notify(label) {
-  const cfg     = CONFIG[currentUser];
-  const excuse  = document.getElementById('excuse').value.trim() || '(no excuse given)';
+  const cfg       = CONFIG[currentUser];
+  const excuse    = document.getElementById('excuse').value.trim();
   const timestamp = new Date().toLocaleString();
   const { subject, content } = buildEmailContent(cfg, label, excuse, timestamp);
-
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
     to_email: cfg.notifyEmail,
     subject,
@@ -464,7 +735,94 @@ function notify(label) {
   }).catch(() => {});
 }
 
-// ── crack generator ──────────────────────────────────────
+// ── PIN + EDITOR ─────────────────────────────────────────
+
+function openEditor() {
+  if (!gistData) return;
+  const other = currentUser === 'brian' ? 'emily' : 'brian';
+  const otherName = other.charAt(0).toUpperCase() + other.slice(1);
+  document.getElementById('editor-section-label').textContent = otherName + "'s passwords";
+  populateEditorSection('other', gistData[other] || []);
+  document.getElementById('editor-wrap').style.display = 'flex';
+  document.getElementById('save-status').textContent   = '';
+  document.getElementById('save-status').className     = 'save-status';
+}
+
+function populateEditorSection(containerId, passwords) {
+  const container = document.getElementById('editor-' + containerId);
+  container.innerHTML = '';
+  passwords.forEach(pw => addEditorRow(containerId, pw.label, pw.value));
+}
+
+function addEditorRow(containerId, label = '', value = '') {
+  const container = document.getElementById('editor-' + containerId);
+  const row = document.createElement('div');
+  row.className = 'pw-row';
+  row.innerHTML = `
+    <input class="pw-row-label" type="text" placeholder="Label" value="${label.replace(/"/g,'&quot;')}" />
+    <input class="pw-row-value" type="text" placeholder="Password" value="${value.replace(/"/g,'&quot;')}" />
+    <button class="pw-row-del" onclick="this.closest('.pw-row').remove()">✕</button>`;
+  container.appendChild(row);
+}
+
+function getEditorRows(containerId) {
+  return Array.from(document.querySelectorAll(`#editor-${containerId} .pw-row`)).map(row => {
+    const inputs = row.querySelectorAll('input');
+    return { label: inputs[0].value.trim(), value: inputs[1].value.trim() };
+  }).filter(r => r.label || r.value);
+}
+
+async function saveToGist() {
+  const btn      = document.getElementById('save-btn');
+  const statusEl = document.getElementById('save-status');
+  btn.disabled   = true;
+  statusEl.textContent = 'saving…';
+  statusEl.className   = 'save-status';
+
+  const other = currentUser === 'brian' ? 'emily' : 'brian';
+
+  const newData = {
+    ...gistData,
+    [other]: getEditorRows('other'),
+  };
+
+  try {
+    const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+        'Content-Type':  'application/json',
+        'Accept':        'application/vnd.github+json',
+      },
+      body: JSON.stringify({
+        files: {
+          'passwords.json': {
+            content: JSON.stringify(newData, null, 2),
+          },
+        },
+      }),
+    });
+
+    if (!res.ok) throw new Error('GitHub API error ' + res.status);
+
+    gistData = newData;
+    statusEl.textContent = '✓ saved successfully';
+    statusEl.className   = 'save-status ok';
+
+  } catch {
+    statusEl.textContent = '⚠ save failed — check token';
+    statusEl.className   = 'save-status error';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function closeEditor() {
+  document.getElementById('editor-wrap').style.display       = 'none';
+  document.getElementById('update-toggle-btn').style.display = 'block';
+}
+
+// ── CRACK GENERATOR ──────────────────────────────────────
 function rng(seed) {
   const x = Math.sin(seed + 1) * 43758.5453123;
   return x - Math.floor(x);
@@ -497,13 +855,16 @@ function buildCrackPaths(allClicks, w, h) {
   return paths.join('');
 }
 
-// ── build cards ──────────────────────────────────────────
-let clickHistory = {};
-
+// ── BUILD CARDS ──────────────────────────────────────────
 function buildCards(passwords) {
   const container = document.getElementById('cards');
   container.innerHTML = '';
   clickHistory = {};
+
+  if (!passwords || passwords.length === 0) {
+    container.innerHTML = '<div class="status-msg">no passwords found</div>';
+    return;
+  }
 
   passwords.forEach((pw, idx) => {
     clickHistory[idx] = [];
@@ -535,6 +896,8 @@ function buildCards(passwords) {
     });
 
     document.getElementById(`glass-${idx}`).addEventListener('click', function(e) {
+      if (!requireExcuse()) return;
+
       const history = clickHistory[idx];
       if (history.length >= MAX_CLICKS) return;
 
